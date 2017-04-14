@@ -1,1 +1,5 @@
-tornado
+tornado==4.4.2
+motor==1.1
+PyJWT==1.4.2
+requests==2.12.4
+passlib==1.7.1

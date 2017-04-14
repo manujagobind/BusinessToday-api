@@ -1,11 +1,13 @@
-import tornado.web
-import tornado.escape
+from modules import *
 
-class testHandler(tornado.web.RequestHandler):
+class testHandler(RequestHandler):
 
     def get(self):
         ob = {
-            'status': 'OK',
-            'response': 'API Server Running'
+            'status': {
+                'success': 'true',
+                'code': 200,
+                'message': 'API Server Running',
+            }
         }
-        self.write(tornado.escape.json_encode(ob))
+        self.write(json_encode(ob))
