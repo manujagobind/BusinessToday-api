@@ -14,8 +14,5 @@ from passlib.hash import pbkdf2_sha256
 from datetime import datetime
 
 
-def get_token(email_id, time):
-    return jwt.encode({"email_id" : email_id, "time" : time}, secret, algorithm = 'HS256')
-
 db = MotorClient('mongodb://cse325user:cse325pass@ds157390.mlab.com:57390/cse325')['cse325']
 secret = 'secret_key_goes_here'
