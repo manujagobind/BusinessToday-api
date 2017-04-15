@@ -14,5 +14,6 @@ from passlib.hash import pbkdf2_sha256
 from datetime import datetime
 
 
-db = MotorClient('mongodb://cse325user:cse325pass@ds157390.mlab.com:57390/cse325')['cse325']
+#db = MotorClient('mongodb://cse325user:cse325pass@ds157390.mlab.com:57390/cse325')['cse325']
 secret = 'secret_key_goes_here'
+db = MotorClient().cse325
