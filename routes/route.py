@@ -10,5 +10,5 @@ routing = [
     (r'/user', user.RetrieveUserHandler),
     (r'/user/products', user.RetrieveProductsHandler),
     (r'/user/product/new', user.AddProductsHandler),
-    (r'/feed', feed.FeedHandler),
+    (r'/feed', feed .FeedHandler),
 ]
