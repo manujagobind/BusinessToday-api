@@ -10,10 +10,18 @@ class FeedHandler(RequestHandler):
         token = self.request.headers['token']
         token_data = yield db.tokens.find_one({'token': token})
 
-        if token_data:
-            org_id = token_data['email_id']
-            org_data = yield db.businesses.find_one({'email_id': org_id})   #TODO
-            products_data = yield db.products.find_one({'org_id': org_id})  #TODO
+        if token_data and token_data['type'].tolower() in ['business']:
+            org_id = token_data['user_id']
+            org_cursor = db.businesses.find({'_id': org_id})
+
+            data = list()
+            while (yield org_cursor.fetch_next):
+                org_data = org_cursor.next_object()
+                products_cursor = db.products.find({'org_id': org_id})
+                data.append(dict({org_data['_id']}))
+                while(yield products_cursor.fetch_next):
+                    product_data = products_cursor.next_object()
+
             if products_data:
                 del products_data['_id']
                 del org_data['_id']
