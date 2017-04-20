@@ -3,7 +3,7 @@ from utilities import *
 
 
 class FeedHandler(RequestHandler):
-
+    #Lists all products offered by all other business organizations.
     @coroutine
     def get(self):
 
@@ -11,7 +11,7 @@ class FeedHandler(RequestHandler):
         token_data = yield db.tokens.find_one({'token': token, 'type': 'business'})
 
         if token_data:
-            org_cursor = db.businesses.find()
+            org_cursor = db.businesses.find({ '_id': {'$ne': ObjectId(token_data['user_id'])} })
             data = list()
             while (yield org_cursor.fetch_next):
                 org_data = org_cursor.next_object()
@@ -19,7 +19,7 @@ class FeedHandler(RequestHandler):
                 del org_data['_id']
                 del org_data['password']
                 del org_data['salt']
-                
+
                 products_cursor = db.products.find({'org_id': org_data['id']})
                 while(yield products_cursor.fetch_next):
                     product = products_cursor.next_object()
