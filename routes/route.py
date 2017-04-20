@@ -11,6 +11,7 @@ routing = [
     (r'/user/products', user.RetrieveAllProductsOfCurrentBusinessHandler),
     (r'/user/product/new', user.AddProductsHandler),
     (r'/product/id', product.RetrieveProductByIdHandler),
+    #(r'/product/search', product.SearchProductHandler),
     (r'/feed', feed.FeedHandler),
     (r'/deal/request', deal.RequestDealHandler),
     (r'/deal/settle', deal.SettleDealHandler),
@@ -21,4 +22,6 @@ routing = [
     (r'/deal/seller/settled', deal.SellerSettledDealsHandler),
     (r'/deal/buyer/cancelled', deal.BuyerCancelledDealsHandler),
     (r'/deal/seller/cancelled', deal.SellerCancelledDealsHandler),
+    (r'/dashboard/business', dashboard.BusinessDashboardHandler),
+    #(r'/dashboard/admin', dashboard.AdminDashBoardHandler),
 ]
