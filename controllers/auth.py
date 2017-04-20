@@ -18,16 +18,14 @@ class RegisterBusinessHandler(RequestHandler):
 
             password, salt = passHash(password)
             yield db.businesses.insert({
-                '_id' : get_next_sequence("business_id")
                 'email_id': email_id,
                 'password': password,
+                'salt': salt,
                 'org_name': org_name,
                 'phone_no': phone_no,
                 'addr': addr,
                 'website_url': website_url,
-                'salt': salt
             })
-
             ob = {
                 'status': {
                     'success': 'true',
@@ -64,11 +62,13 @@ class BusinessLoginHandler(RequestHandler):
                 token = get_token(email_id, time)
                 yield db.tokens.insert({
                     'token': token,
-                    'user_id': email_id,
+                    'user_id': str(data['_id']),
                     'name': data['org_name'],
                     'type': 'business'
                 })
 
+                data['id'] = str(data['_id'])
+                del data['_id']
                 del data['password']
                 del data['salt']
 
@@ -106,20 +106,20 @@ class AddNewAdminHandler(RequestHandler):
     @coroutine
     def post(self):
         email_id = self.get_argument('email_id')
-        password = self.get_password('password')
+        password = self.get_argument('password')
         disp_name = self.get_argument('disp_name')
 
         adminExists = yield db.admins.find_one({'email_id': email_id})
 
         if not adminExists:
-            password, sale = passHash(password)
+            password, salt = passHash(password)
 
-            yield db.admins.insert(
-                '_id' : get_next_sequence('admin_id'),
-                'email_id': email_id,
-                'disp_name': disp_name,
-                'password': password,
-                'salt': salt,
+            yield db.admins.insert({
+                    'email_id': email_id,
+                    'disp_name': disp_name,
+                    'password': password,
+                    'salt': salt,
+                }
             )
             ob = {
                 'status': 'success',
@@ -154,11 +154,13 @@ class AdminLoginHandler(RequestHandler):
                 token = get_token(email_id, time)
                 yield db.tokens.insert({
                     'token': token,
-                    'user_id': email_id,
+                    'user_id': str(data['_id']),
                     'name': data['disp_name'],
                     'type': 'admin'
                 })
 
+                data['id'] = str(data['_id'])
+                del data['_id']
                 del data['password']
                 del data['salt']
 
@@ -197,12 +199,21 @@ class LogoutHandler(RequestHandler):
     @coroutine
     def post(self):
         token = self.get_argument('token')
-        yield db.tokens.remove({'token': token})
-        ob = {
-            'status': {
-                'success': 'true',
-                'code': 200,
-                'message': 'Logout Successful'
+        loggedout = yield db.tokens.remove({'token': token})
+        if loggedout:
+            ob = {
+                'status': {
+                    'success': 'true',
+                    'code': 200,
+                    'message': 'Logout Successful'
+                }
             }
-        }
+        else:
+            ob = {
+                'status': {
+                    'success': 'false',
+                    'code': 500,
+                    'message': 'Logout Not Successful'
+                }
+            }
         self.write(json_encode(ob))

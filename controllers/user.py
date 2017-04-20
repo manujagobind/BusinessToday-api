@@ -7,17 +7,19 @@ class RetrieveCurrentUserHandler(RequestHandler):
     @coroutine
     def get(self):
         token = self.request.headers['token']
-        user_type = self.request.headers['user_type'].tolower()
+        user_type = self.request.headers['user_type'].lower()
 
         if user_type in ['admin', 'business']:
             token_data = yield db.tokens.find_one({'token': token, 'type': user_type})
 
             if token_data and user_type in ['business']:
-                user_data = yield db.businesses.find_one({'email_id': token_data['user_id']})
+                user_data = yield db.businesses.find_one({'_id': ObjectId(token_data['user_id'])})
             elif token_data and user_type in ['admin']:
-                user_data = yield db.admins.find_one({'email_id': token_data['user_id']})
+                user_data = yield db.admins.find_one({'_id': ObjectId(token_data['user_id'])})
 
-            if token_data:
+            if token_data and user_data:
+                user_data['id'] = str(user_data['_id'])
+                del user_data['_id']
                 del user_data['password']
                 del user_data['salt']
                 ob = {
@@ -61,7 +63,10 @@ class RetrieveAllProductsOfCurrentBusinessHandler(RequestHandler):
             cursor = db.products.find({'org_id': token_data['user_id']})
             products = list()
             while (yield cursor.fetch_next):
-                products.append(cursor.next_object())
+                product = cursor.next_object()
+                product['id'] = str(product['_id'])
+                del product['_id']
+                products.append(product)
             if products:
                 ob = {
                     'status': {
@@ -106,11 +111,10 @@ class AddProductsHandler(RequestHandler):
         if token_data:
             org_id = token_data['user_id']
             productAdded = yield db.products.insert({
-                '_id': get_next_sequence('product_id')
                 'product_title': product_title,
                 'product_desc': product_desc,
                 'product_price': product_price,
-                'org_id': org_id
+                'org_id': org_id,
             })
             if productAdded:
                 ob = {

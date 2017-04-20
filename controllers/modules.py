@@ -10,10 +10,12 @@ import json
 import requests
 import os, uuid, sys
 from motor import MotorClient
+from pymongo import ReturnDocument
+from pymongo.errors import DuplicateKeyError
 from passlib.hash import pbkdf2_sha256
 from datetime import datetime
+from bson import ObjectId
 
-
-db = MotorClient('mongodb://cse325user:cse325pass@ds157390.mlab.com:57390/cse325')['cse325']
+#db = MotorClient('mongodb://cse325user:cse325pass@ds157390.mlab.com:57390/cse325')['cse325']
 secret = 'secret_key_goes_here'
-#db = MotorClient().cse325
+db = MotorClient().cse325
