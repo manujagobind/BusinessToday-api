@@ -4,7 +4,7 @@ from utilities import *
 class RequestDealHandler(RequestHandler):
     @coroutine
     def post(self):
-        token = self.get_argument('token')
+        token = self.request.headers['token']
         product_id = self.get_argument('product_id')
         seller_id = self.get_argument('seller_id')
         buyer_id = self.get_argument('buyer_id')
@@ -53,7 +53,7 @@ class DealsRequestedHandler(RequestHandler):
 
     @coroutine
     def post(self):
-        token = self.get_argument('token')
+        token = self.request.headers['token']
         token_data = yield db.tokens.find_one({'token': token, 'type': 'business'})
         if token_data:
             org_id = token_data['user_id']
@@ -99,7 +99,7 @@ class DealsRequestedHandler(RequestHandler):
 class DealRequestsReceivedHandler(RequestHandler):
     @coroutine
     def post(self):
-        token = self.get_argument('token')
+        token = self.request.headers['token']
         token_data = yield db.tokens.find_one({'token': token, 'type': 'business'})
         if token_data:
             org_id = token_data['user_id']
@@ -146,7 +146,7 @@ class DealRequestsReceivedHandler(RequestHandler):
 class SettleDealHandler(RequestHandler):
     @coroutine
     def post(self):
-        token = self.get_argument('token')
+        token = self.request.headers['token']
         deal_id = self.get_argument('deal_id')
 
         tokenExists = yield db.tokens.find_one({'token': token, 'type': 'business'})
@@ -183,7 +183,7 @@ class CancelDealHandler(RequestHandler):
 
     @coroutine
     def post(self):
-        token = self.get_argument('token')
+        token = self.request.headers['token']
         deal_id = self.get_argument('deal_id')
         tokenExists = yield db.tokens.find_one({'token': token, 'type': 'business'})
         if tokenExists:
@@ -218,7 +218,7 @@ class CancelDealHandler(RequestHandler):
 class BuyerSettledDealsHandler(RequestHandler):
     @coroutine
     def post(self):
-        token = self.get_argument('token')
+        token = self.request.headers['token']
         token_data = yield db.tokens.find_one({'token': token, 'type': 'business'})
         if token_data:
             org_id = token_data['user_id']
@@ -264,7 +264,7 @@ class BuyerSettledDealsHandler(RequestHandler):
 class SellerSettledDealsHandler(RequestHandler):
     @coroutine
     def post(self):
-        token = self.get_argument('token')
+        token = self.request.headers['token']
         token_data = yield db.tokens.find_one({'token': token, 'type': 'business'})
         if token_data:
             org_id = token_data['user_id']
@@ -310,7 +310,7 @@ class SellerSettledDealsHandler(RequestHandler):
 class BuyerCancelledDealsHandler(RequestHandler):
     @coroutine
     def post(self):
-        token = self.get_argument('token')
+        token = self.request.headers['token']
         token_data = yield db.tokens.find_one({'token': token, 'type': 'business'})
         if token_data:
             org_id = token_data['user_id']
@@ -356,7 +356,7 @@ class BuyerCancelledDealsHandler(RequestHandler):
 class SellerCancelledDealsHandler(RequestHandler):
     @coroutine
     def post(self):
-        token = self.get_argument('token')
+        token = self.request.headers['token']
         token_data = yield db.tokens.find_one({'token': token, 'type': 'business'})
         if token_data:
             org_id = token_data['user_id']
