@@ -197,8 +197,8 @@ class AdminLoginHandler(RequestHandler):
 class LogoutHandler(RequestHandler):
 
     @coroutine
-    def post(self):
-        token = self.get_argument('token')
+    def get(self):
+        token = self.request.headers['token']
         loggedout = yield db.tokens.remove({'token': token})
         if loggedout:
             ob = {
